@@ -1,18 +1,20 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
+dotenv.config();
+console.log('=== VARIABLES DE ENTORNO ===');
+console.log('PUERTO:', process.env.PUERTO);
+console.log('FAKE_STORE_API_URL:', process.env.FAKE_STORE_API_URL);
+console.log('============================');
 
 // Importar rutas
 import { productosRutas } from './src/v1/rutas/productosRuta.js'
 import { usuariosRutas } from './src/v1/rutas/autenticacionRuta.js';
 
-dotenv.config();
+
 
 const app = express();
 const PUERTO = process.env.PUERTO || 3000; // Usa el puerto del .env o 3000 por defecto
-
-// Configuración de CORS
-app.use(cors());
+;
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -32,7 +34,7 @@ app.get('/', (req, res) => {
         mensaje: 'API Fake Store Proxy', 
         version: '1.0.0',
         endpoints: {
-            productos: '/api/v1/productos',
+            productos: '/api/v1/products',
             usuarios: '/api/v1/usuarios',
             estado: '/estado'
         }

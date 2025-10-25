@@ -1,19 +1,25 @@
-/**
- * Controlador para gestionar operaciones de productos
- * Actúa como proxy/intermediario con Fake Store API usando fetch nativo
- */
+import dotenv from 'dotenv';
+dotenv.config(); // ¡ESTA LÍNEA ES CRÍTICA!
+
 const API_URL = process.env.FAKE_STORE_API_URL;
 
 /**
- * Obtener todos los productos de la API externa
- * @returns {Promise<Array>} Lista de productos
+ * Controlador para gestión de productos - Proxy para Fake Store API
  */
 export const obtenerTodos = async (req, res, next) => {
   try {
+    console.log('Consultando API URL:', `${API_URL}/products`);
+    
     const respuesta = await fetch(`${API_URL}/products`);
+    
+    if (!respuesta.ok) {
+      throw new Error(`Error HTTP: ${respuesta.status}`);
+    }
+    
     const productos = await respuesta.json();
     res.json(productos);
   } catch (error) {
+    console.error('Error en obtenerTodos:', error.message);
     next(error);
   }
 };

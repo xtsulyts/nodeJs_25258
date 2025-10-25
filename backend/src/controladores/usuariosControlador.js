@@ -1,8 +1,13 @@
+import dotenv from 'dotenv'
+dotenv.config();
+
 /**
  * Controlador para gestionar operaciones de usuarios
  * Maneja autenticación y datos de usuarios mediante Fake Store API usando fetch
  */
 const API_URL = process.env.FAKE_STORE_API_URL;
+
+
 
 /**
  * Autenticar usuario y obtener token JWT
