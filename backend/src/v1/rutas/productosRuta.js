@@ -2,14 +2,15 @@
 
 /**
  * Rutas para gestión de productos
- * Proxy para Fake Store API - Expone endpoints para operaciones CRUD de productos
  */
 import { Router } from 'express';
 import { 
   obtenerTodos, 
   obtenerPorId, 
   obtenerPorCategoria, 
-  obtenerCategorias 
+  obtenerCategorias,
+  crearProducto,
+  eliminarProducto 
 } from '../../controladores/productosControladores.js';
 
 const router = Router();
@@ -25,5 +26,11 @@ router.get('/categoria/:categoria', obtenerPorCategoria);
 
 // Obtener todas las categorías disponibles
 router.get('/categorias/todas', obtenerCategorias);
+
+// POST - Crear nuevo producto
+router.post('/', crearProducto);
+
+// DELETE - Eliminar producto
+router.delete('/:id', eliminarProducto);
 
 export { router as productosRutas };

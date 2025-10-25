@@ -1,6 +1,5 @@
 /**
  * Rutas para gestión de usuarios y autenticación
- * Proxy para Fake Store API - Maneja autenticación y datos de usuarios
  */
 import { Router } from 'express';
 import { 

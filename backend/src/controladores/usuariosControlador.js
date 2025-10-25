@@ -1,5 +1,3 @@
-import dotenv from 'dotenv'
-dotenv.config();
 
 /**
  * Controlador para gestionar operaciones de usuarios
@@ -61,24 +59,67 @@ export const obtenerPorId = async (req, res, next) => {
   }
 };
 
-/**
- * Obtener el usuario actualmente autenticado (simulación)
- * @param {Object} req - Request de Express
- */
-export const obtenerUsuarioActual = async (req, res, next) => {
+
+// POST - Crear nuevo producto
+export const crearProducto = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+    console.log('POST - Creando nuevo producto');
+    const { title, price, description, category, image } = req.body;
     
-    if (!token) {
-      return res.status(401).json({ error: 'Token no proporcionado' });
+    // Validar campos requeridos
+    if (!title || !price || !description || !category) {
+      return res.status(400).json({ 
+        error: 'Faltan campos requeridos: title, price, description, category' 
+      });
     }
     
-    // Simulación para una API real
+    const respuesta = await fetch(`${API_URL}/products`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title,
+        price: parseFloat(price),
+        description,
+        category,
+        image: image || 'https://via.placeholder.com/150'
+      })
+    });
+    
+    if (!respuesta.ok) {
+      throw new Error(`Error HTTP: ${respuesta.status}`);
+    }
+    
+    const nuevoProducto = await respuesta.json();
+    res.status(201).json(nuevoProducto);
+  } catch (error) {
+    console.error('Error en crearProducto:', error.message);
+    next(error);
+  }
+};
+
+// DELETE - Eliminar producto
+export const eliminarProducto = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    console.log(`DELETE - Eliminando producto ID: ${id}`);
+    
+    const respuesta = await fetch(`${API_URL}/products/${id}`, {
+      method: 'DELETE'
+    });
+    
+    if (!respuesta.ok) {
+      throw new Error(`Error HTTP: ${respuesta.status}`);
+    }
+    
+    const resultado = await respuesta.json();
     res.json({ 
-      mensaje: 'Usuario obtenido (simulación con fetch)',
-      token 
+      message: 'Producto eliminado exitosamente',
+      deletedProduct: resultado 
     });
   } catch (error) {
+    console.error('Error en eliminarProducto:', error.message);
     next(error);
   }
 };

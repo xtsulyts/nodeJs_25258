@@ -1,10 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
-console.log('=== VARIABLES DE ENTORNO ===');
-console.log('PUERTO:', process.env.PUERTO);
-console.log('FAKE_STORE_API_URL:', process.env.FAKE_STORE_API_URL);
-console.log('============================');
 
 // Importar rutas
 import { productosRutas } from './src/v1/rutas/productosRuta.js'
