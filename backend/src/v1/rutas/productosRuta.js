@@ -1,36 +1,50 @@
-
-
-/**
- * Rutas para gestión de productos
- */
 import { Router } from 'express';
 import { 
-  obtenerTodos, 
+  obtenerTodos,
   obtenerPorId, 
-  obtenerPorCategoria, 
-  obtenerCategorias,
   crearProducto,
-  eliminarProducto 
+  eliminarProducto
 } from '../../controladores/productosControladores.js';
+
+import { obtenerProductos } from '../../services/productosServices.js';
 
 const router = Router();
 
-// Obtener todos los productos
 router.get('/', obtenerTodos);
-
-// Obtener un producto específico por ID
 router.get('/:id', obtenerPorId);
-
-// Obtener productos por categoría
-router.get('/categoria/:categoria', obtenerPorCategoria);
-
-// Obtener todas las categorías disponibles
-router.get('/categorias/todas', obtenerCategorias);
-
-// POST - Crear nuevo producto
 router.post('/', crearProducto);
-
-// DELETE - Eliminar producto
 router.delete('/:id', eliminarProducto);
+
+router.get('/test/firestore', async (req, res) => {
+  try {
+    console.log('🔍 Probando conexión con Firestore...');
+    const productos = await obtenerProductos();
+    
+    res.json({
+      success: true,
+      message: '✅ Conexión a Firestore exitosa',
+      totalProductos: productos.length,
+      productos: productos,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('❌ Error conectando a Firestore:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      message: '❌ Error de conexión con Firestore'
+    });
+  }
+}); 
+
+router.get('/debug/raw', async (req, res) => {
+  try {
+    const productos = await obtenerProductos();
+    res.json(productos); 
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export { router as productosRutas };

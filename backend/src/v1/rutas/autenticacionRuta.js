@@ -6,7 +6,7 @@ import {
   autenticar, 
   obtenerTodos, 
   obtenerPorId, 
-  obtenerUsuarioActual 
+  //obtenerUsuarioActual
 } from './../../controladores/usuariosControlador.js';
 
 const router = Router();
