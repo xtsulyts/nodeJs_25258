@@ -1,0 +1,90 @@
+{
+    "success": true,
+    "message": "Productos obtenidos correctamente",
+    "total": 3,
+    "data": [
+        {
+            "id": "ExRq6G0INDy4gmKM4t8I",
+            "nombre": "Mouseeeeeeeeeeeeeeeeee",
+            "precio": 45000,
+            "marca": "Razer",
+            "Fecha de creacion": {
+                "type": "firestore/timestamp/1.0",
+                "seconds": 1764477312,
+                "nanoseconds": 361000000
+            },
+            "subcategoria": "Mouses",
+            "Estado": true,
+            "descripcion": "Mouse para gaming con sensor óptico de alta precisión y RGB personalizable",
+            "Caracteristicas": {
+                "Tipo": "Óptico",
+                "Botones": "6",
+                "Conectividad": [
+                    "USB",
+                    "Inalambrico"
+                ],
+                "DPI": "16000"
+            },
+            "categoria": "Perifericos",
+            "Especificaciones": {
+                "Peso": "95 g",
+                "Dimenciones": "125 x 65 x 40 mm"
+            }
+        },
+        {
+            "id": "f7v77SXpdZ40GhcJj0Xs",
+            "subcategoria": "Mouses",
+            "categoria": "Perifericos",
+            "marca": "Razer",
+            "Caracteristicas": {
+                "Tipo": "Óptico",
+                "DPI": "16000",
+                "Botones": "6",
+                "Conectividad": [
+                    "USB",
+                    "Inalambrico"
+                ]
+            },
+            "nombre": "Mouse Gaming RGB Pro",
+            "Fecha de creacion": {
+                "type": "firestore/timestamp/1.0",
+                "seconds": 1764477216,
+                "nanoseconds": 329000000
+            },
+            "precio": 45000,
+            "descripcion": "Mouse para gaming con sensor óptico de alta precisión y RGB personalizable",
+            "Especificaciones": {
+                "Peso": "95 g",
+                "Dimenciones": "125 x 65 x 40 mm"
+            },
+            "Estado": true
+        },
+        {
+            "id": "kY5DnyOBcpsi4CwkqPtO",
+            "Especificaciones": {
+                "Dimenciones": "355 x 145 x 35 mm",
+                "Peso": "1.2 kg"
+            },
+            "Estado": true,
+            "descripcion": "Teclado mecánico para gaming con switches intercambiables",
+            "marca": "Logitech",
+            "Caracteristicas": {
+                "Conectividad": [
+                    "Usb",
+                    "Inalambrico"
+                ],
+                "Tipo": "Mecanico",
+                "Switches": "Blue"
+            },
+            "nombre": "Teclado Mecánico RGB Gaming",
+            "subcategoria": "Teclados",
+            "categoria": "Perifericos",
+            "precio": 80000,
+            "Fecha de creacion": {
+                "type": "firestore/timestamp/1.0",
+                "seconds": 1764471205,
+                "nanoseconds": 309000000
+            }
+        }
+    ]
+}

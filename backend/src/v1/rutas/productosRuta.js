@@ -4,7 +4,7 @@ import {
   obtenerPorId, 
   crearProducto,
   eliminarProducto
-} from '../../controladores/productosControladores.js';
+} from '../../controladores/productosControlador.js';
 
 import { obtenerProductos } from '../../services/productosServices.js';
 

@@ -8,27 +8,13 @@ import {
 
 export const obtenerTodos = async (req, res, next) => {
   try {
-    console.log('🎯 Controlador obtenerTodos ejecutándose');
     const productos = await obtenerProductos();
-    
-    // ✅ DEBUG: Ver estructura real de los datos
-    console.log('🔍 Estructura del primer producto:');
-    if (productos.length > 0) {
-      console.log('📄 Documento completo:', productos[0]);
-      console.log('🏷️ Campos disponibles:', Object.keys(productos[0]));
-    }
     
     res.json({
       success: true,
       message: 'Productos obtenidos correctamente',
       total: productos.length,
       data: productos,
-      estructuraEjemplo: productos.length > 0 ? {
-        id: productos[0].id,
-        nombre: productos[0].nombre,
-        precio: productos[0].precio,
-        color: productos[0].color
-      } : 'No hay productos'
     });
     
   } catch (error) {
@@ -36,12 +22,24 @@ export const obtenerTodos = async (req, res, next) => {
     next(error);
   }
 };
+
 export const obtenerPorId = async (req, res, next) => {
   try {
     const { id } = req.params;
+    console.log(`🔍 GET /api/products/${id} - Buscando producto...`);
+    
     const producto = await obtenerProductoPorId(id);
+    
+    console.log('✅ Producto encontrado:', {
+      id: producto.id,
+      nombre: producto.nombre,
+      precio: producto.precio,
+      categoria: producto.categoria
+    });
+    
     res.json(producto);
   } catch (error) {
+    console.error(`❌ Error buscando producto ${id}:`, error.message);
     next(error);
   }
 };
@@ -49,19 +47,37 @@ export const obtenerPorId = async (req, res, next) => {
 export const crearProducto = async (req, res, next) => {
   try {
     console.log('POST - Creando nuevo producto en Firestore');
-    const { nombre, precio } = req.body;
+    const { 
+      nombre, 
+      precio, 
+      descripcion, 
+      categoria, 
+      subcategoria, 
+      marca,
+      Caracteristicas,
+      Especificaciones,
+      Estado = true, 
+    } = req.body;
     
-    if (!nombre || !precio ) {
+    // Validar campos obligatorios
+    if (!nombre || !precio || !descripcion || !categoria || !subcategoria || !marca) {
       return res.status(400).json({ 
-        error: 'Faltan campos requeridos: nombre, precio, descripcion, categoria' 
+        error: 'Faltan campos requeridos: nombre, precio, descripcion, categoria, subcategoria, marca' 
       });
     }
     
     const nuevoProducto = await crearProductoService({
-      nombre,
-      precio: parseFloat(precio),
-      fechaCreacion: new Date()
-    });
+    nombre,
+    precio: parseFloat(precio),
+    descripcion,
+    categoria,
+    subcategoria,
+    marca,
+    Caracteristicas: Caracteristicas || {},  
+    Especificaciones: Especificaciones || {}, 
+    Estado: Estado,
+    "Fecha de creacion": new Date()
+  });
     
     res.status(201).json(nuevoProducto);
   } catch (error) {

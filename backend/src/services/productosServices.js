@@ -12,32 +12,20 @@ import {
 
 export const obtenerProductos = async () => {
   try {
-    console.log('1️⃣ INICIANDO obtenerProductos...');
-    
-    console.log('2️⃣ Creando referencia a colección...');
     const productosRef = collection(db, 'productos');
-    
-    console.log('3️⃣ Ejecutando getDocs...');
     const querySnapshot = await getDocs(productosRef);
-    console.log('4️⃣ getDocs completado, tamaño:', querySnapshot.size);
+
+    console.log('📦 Productos obtenidos, total:', querySnapshot.size);
     
-    const productos = [];
-    let contador = 0;
-    
-    console.log('5️⃣ Procesando documentos...');
-    querySnapshot.forEach((doc) => {
-      contador++;
-      console.log(`   📄 Documento ${contador}:`, doc.id, doc.data());
-      
-      productos.push({
+    const productos = querySnapshot.docs.map(doc => {
+      // 👇 CAMBIO AQUÍ: Mostrar ID + todos los datos
+      console.log(`   📄 id: ${doc.id}:`, doc.data());
+      return {
         id: doc.id,
         ...doc.data()
-      });
+      };
     });
-    
-    console.log('6️⃣ FINALIZADO - Total productos:', productos.length);
-    console.log('7️⃣ Productos finales:', productos);
-    
+
     return productos;
     
   } catch (error) {
@@ -46,7 +34,6 @@ export const obtenerProductos = async () => {
   }
 };
 
-// Obtener un producto por ID
 export const obtenerProductoPorId = async (id) => {
   try {
     const docRef = doc(db, 'productos', id);
@@ -99,8 +86,17 @@ export const eliminarProducto = async (id) => {
 
 export const obtenerCategorias = async () => {
   try {
-    const productos = await obtenerProductos();
-    const categorias = [...new Set(productos.map(p => p.categoria))];
+    const categoriasRef = collection(db, 'categorias');
+    const querySnapshot = await getDocs(categoriasRef);
+    
+    const categorias = [];
+    querySnapshot.forEach((doc) => {
+      categorias.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
     return categorias;
   } catch (error) {
     throw new Error(`Error obteniendo categorías: ${error.message}`);

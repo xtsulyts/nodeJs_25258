@@ -4,7 +4,6 @@ import { getFirestore } from 'firebase/firestore';
 
 console.log('🔧 Configurando Firebase...');
 console.log('🏢 Project ID desde .env:', process.env.FIREBASE_PROJECT_ID);
-console.log('🔑 API Key existe:', !!process.env.FIREBASE_API_KEY);
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -14,8 +13,6 @@ const firebaseConfig = {
   messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.FIREBASE_APP_ID
 };
-
-console.log('📋 Firebase Config:', firebaseConfig);
 
 const app = initializeApp(firebaseConfig)
 

@@ -1,6 +1,5 @@
 import admin from 'firebase-admin';
 
-// Validar que existan las variables críticas
 const requiredEnvVars = [
   'FIREBASE_PROJECT_ID',
   'FIREBASE_PRIVATE_KEY', 
