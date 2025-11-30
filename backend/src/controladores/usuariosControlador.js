@@ -1,61 +1,46 @@
+import { 
+  verificarEmailExistente, 
+  crearUsuario 
+} from '../services/usuariosServicios.js';
+import cryptoServices from '../services/criptoServices.js'
 
-/**
- * Controlador para gestionar operaciones de usuarios
- * Maneja autenticación y datos de usuarios mediante Fake Store API usando fetch
- */
-const API_URL = process.env.FAKE_STORE_API_URL;
-
-
-
-/**
- * Autenticar usuario y obtener token JWT
- * @param {Object} req - Request de Express con username y password
- * @param {Object} res - Response de Express
- */
-export const autenticar = async (req, res, next) => {
+export const registroUsuarios = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, contrasenia, nombre, rol } = req.body;
     
-    const respuesta = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password })
+    // 1. Validar campos requeridos
+    if (!email || !contrasenia || !nombre || !rol) {
+      return res.status(400).json({ 
+        error: 'Faltan campos requeridos' 
+      });
+    }
+    
+    // 2. Verificar si email existe
+    const emailExiste = await verificarEmailExistente(email);
+    if (emailExiste) {
+      return res.status(400).json({ error: 'El email ya está registrado' });
+    }
+
+    const contraseniaHash = await cryptoServices.hashPassword(contrasenia);
+    
+    // 3. TEMPORAL: Guardar con contraseña en texto plano (LO CAMBIAREMOS)
+    const usuarioId = await crearUsuario({
+      email,
+      contrasenia: contraseniaHash,
+      nombre,
+      rol: Number(rol),
+      activo: true,
+      fecha_registro: new Date()
     });
     
-    const datos = await respuesta.json();
-    res.json(datos);
+    // 4. Responder éxito
+    res.status(201).json({ 
+      mensaje: 'Usuario registrado exitosamente',
+      usuario: { id: usuarioId, email, nombre, rol } 
+    });
+    
   } catch (error) {
-    next(error);
+    console.error('Error en registro:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
-
-/**
- * Obtener todos los usuarios
- */
-export const obtenerTodos = async (req, res, next) => {
-  try {
-    const respuesta = await fetch(`${API_URL}/users`);
-    const usuarios = await respuesta.json();
-    res.json(usuarios);
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * Obtener un usuario específico por ID
- * @param {Object} req - Request de Express
- */
-export const obtenerPorId = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const respuesta = await fetch(`${API_URL}/users/${id}`);
-    const usuario = await respuesta.json();
-    res.json(usuario);
-  } catch (error) {
-    next(error);
-  }
-};
-
