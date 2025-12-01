@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { obtenerProductos } from '../../services/productosServices.js';
+import autorizar from '../../middlewares/autorizacionMiddleware.js';
 import { 
   obtenerTodos,
   obtenerPorId, 
@@ -6,11 +8,10 @@ import {
   eliminarProducto
 } from '../../controladores/productosControlador.js';
 
-import { obtenerProductos } from '../../services/productosServices.js';
 
 const router = Router();
 
-router.get('/', obtenerTodos);
+router.get('/', obtenerTodos, autorizar.autorizar[1, 2, 3]);
 router.get('/:id', obtenerPorId);
 router.post('/', crearProducto);
 router.delete('/:id', eliminarProducto);

@@ -1,4 +1,3 @@
-// services/cryptoService.js
 import bcrypt from 'bcryptjs';
 
 class CryptoService {
@@ -6,19 +5,13 @@ class CryptoService {
     this.saltRounds = 12;
   }
 
-  /**
-   * Cifra una contraseña
-   * @param {string} password - Contraseña en texto plano
-   * @returns {Promise<string>} - Hash de la contraseña
-   */
   async hashPassword(password) {
     try {
-      // Validación básica
+
       if (!password || typeof password !== 'string') {
         throw new Error('La contraseña debe ser una cadena de texto válida');
       }
 
-      // Generar salt y hash
       const salt = await bcrypt.genSalt(this.saltRounds);
       const hash = await bcrypt.hash(password, salt);
       
@@ -28,7 +21,20 @@ class CryptoService {
       throw new Error('No se pudo cifrar la contraseña');
     }
   }
+
+  async comparePassword(password, hash) {
+    try {
+      if (!password || !hash) {
+        throw new Error('Contraseña y hash son requeridos');
+      }
+      
+      const isMatch = await bcrypt.compare(password, hash);
+      return isMatch;
+    } catch (error) {
+      console.error('Error al comparar contraseñas:', error);
+      throw new Error('No se pudo verificar la contraseña');
+    }
+  }
 }
 
-// Exportar instancia del servicio
 export default new CryptoService();
