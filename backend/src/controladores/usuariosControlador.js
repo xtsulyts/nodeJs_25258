@@ -5,20 +5,32 @@ import {
 } from '../services/usuariosServicios.js';
 import cryptoServices from '../services/criptoServices.js'
 import { generarToken } from '../services/jwtServices.js';
+import { validationResult } from 'express-validator';
 
 export const registroUsuarios = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+
+      console.log('❌ Error al crear usuario:', {
+      path: req.path,
+      errores: errors.array()
+    });
+    
+    return res.status(400).json({ 
+      error: 'Datos inválidos',
+      detalles: errors.array() 
+    });
+  }
+  
   try {
     const { email, contrasenia, nombre, rol } = req.body;
     
-    if (!email || !contrasenia || !nombre || !rol) {
-      return res.status(400).json({ 
-        error: 'Faltan campos requeridos' 
-      });
-    }
-  
     const emailExiste = await verificarEmailExistente(email);
     if (emailExiste) {
-      return res.status(400).json({ error: 'El email ya está registrado' });
+      return res.status(400).json({ 
+        
+        error: 'El email ya está registrado' 
+      });
     }
 
     const contraseniaHash = await cryptoServices.hashPassword(contrasenia);
@@ -27,23 +39,39 @@ export const registroUsuarios = async (req, res) => {
       email,
       contrasenia: contraseniaHash,
       nombre,
-      rol: Number(rol),
+      rol: rol, 
       activo: true,
       fecha_registro: new Date()
     });
     
     res.status(201).json({ 
       mensaje: 'Usuario registrado exitosamente',
-      usuario: { id: usuarioId, email, nombre, rol } 
+      usuario: { 
+        id: usuarioId, 
+        email, 
+        nombre, 
+        rol 
+      } 
     });
     
   } catch (error) {
     console.error('Error en registro:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ 
+      error: 'Error interno del servidor' 
+    });
   }
 };
 
 export const loginUsuarios = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('❌ Validación login fallida:', errors.array());
+    return res.status(400).json({ 
+      error: 'Datos inválidos',
+      detalles: errors.array() 
+    });
+  }
+  
   try {
     const { email, contrasenia } = req.body;
     

@@ -2,17 +2,18 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const generarToken = (datosUsuario) => {
-    return jwt.sign(
-        {
-            id: datosUsuario.usuario_id,
-            usuario: datosUsuario.nombre_usuario,
-            tipo: datosUsuario.tipo_usuario,
-            nombre: datosUsuario.nombre
-        },
-        JWT_SECRET,
-        { expiresIn: '8h' }
-    );
+
+export const generarToken = (usuario) => {
+  return jwt.sign(
+    {
+      id: usuario.id,
+      email: usuario.email,
+      rol: usuario.rol,
+      nombre: usuario.nombre
+    },
+    JWT_SECRET,
+    { expiresIn: '8h' }
+  );
 };
 
 export const verificarToken = (token) => {

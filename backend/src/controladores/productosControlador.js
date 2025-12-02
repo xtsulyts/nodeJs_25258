@@ -111,4 +111,4 @@ export const obtenerCategorias = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+};    

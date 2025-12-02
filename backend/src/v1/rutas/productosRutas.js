@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { obtenerProductos } from '../../services/productosServices.js';
 import autorizar from '../../middlewares/autorizacionMiddleware.js';
+import { verificarAutenticacion } from '../../middlewares/autenticacionMiddleware.js';
 import { 
   obtenerTodos,
   obtenerPorId, 
@@ -11,10 +12,10 @@ import {
 
 const router = Router();
 
-router.get('/', obtenerTodos, autorizar.autorizar[1, 2, 3]);
-router.get('/:id', obtenerPorId);
-router.post('/', crearProducto);
-router.delete('/:id', eliminarProducto);
+router.get('/', verificarAutenticacion, autorizar([1, 2, 3]),obtenerTodos);
+router.get('/:id', verificarAutenticacion, autorizar([1, 2, 3]), obtenerPorId);
+router.post('/', verificarAutenticacion, autorizar([1, 2]), crearProducto);
+router.delete('/:id', verificarAutenticacion, autorizar([1]), eliminarProducto);
 
 router.get('/test/firestore', async (req, res) => {
   try {
