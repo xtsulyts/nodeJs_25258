@@ -1,9 +1,65 @@
 import { Router } from 'express';
-import { body } from 'express-validator';
+import { validate } from '../../middlewares/validadorMiddleware.js';
+import { body, query, param } from 'express-validator';
 import { verificarToken } from '../../services/jwtServices.js';
-import { registroUsuarios, loginUsuarios, logoutUsuario } from '../../controladores/usuariosControlador.js';
+import { 
+  registroUsuarios, 
+  loginUsuarios, 
+  logoutUsuario, 
+  obtenerUsuarioPorIdControlador, 
+  obtenerUsuariosControlador,
+  obtenerMiPerfilControlador
+ } from '../../controladores/usuariosControlador.js';
+import { verificarAutenticacion } from '../../middlewares/autenticacionMiddleware.js';
 
 const router = Router();
+
+router.get('/test-ruta', (req, res) => {
+  console.log('✅ Ruta /test-ruta alcanzada desde usuarioRoutes');
+  res.json({ message: 'Test desde usuarioRoutes funciona' });
+});
+
+
+router.get('/',
+  [
+    query('soloActivos')
+      .optional()
+      .isIn(['true', 'false', '1', '0'])
+      .withMessage('soloActivos debe ser true, false, 1 o 0'),
+    
+    query('rol')
+      .optional()
+      .isString()
+      .trim()
+      .isLength({ min: 1, max: 50 })
+      .withMessage('Rol inválido'),
+    
+    query('limite')
+      .optional()
+      .isInt({ min: 1, max: 100 })
+      .withMessage('Límite debe ser un número entre 1 y 100')
+  ],
+  validate,
+  obtenerUsuariosControlador
+);
+
+router.get('/:id',
+  [
+    param('id')
+      .notEmpty()
+      .withMessage('El ID es requerido')
+      .isString()
+      .isLength({ min: 1 })
+      .withMessage('ID inválido')
+  ],
+  validate,
+  obtenerUsuarioPorIdControlador
+);
+
+router.get('/perfil/mi-perfil',
+  verificarAutenticacion,  // Middleware de autenticación
+  obtenerMiPerfilControlador
+);      
 
 router.post('/crear-usuario',  [
   body('email')

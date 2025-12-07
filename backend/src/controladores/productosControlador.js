@@ -26,7 +26,7 @@ export const obtenerTodos = async (req, res, next) => {
 export const obtenerPorId = async (req, res, next) => {
   try {
     const { id } = req.params;
-    console.log(`🔍 GET /api/products/${id} - Buscando producto...`);
+    console.log(`🔍 GET /api/productos/${id} - Buscando producto...`);
     
     const producto = await obtenerProductoPorId(id);
     

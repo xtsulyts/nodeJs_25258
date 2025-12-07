@@ -7,7 +7,9 @@ import {
   addDoc, 
   updateDoc, 
   deleteDoc, 
-  doc 
+  doc,
+  where,
+  query
 } from 'firebase/firestore';
 
 export const obtenerProductos = async () => {
@@ -18,7 +20,6 @@ export const obtenerProductos = async () => {
     console.log('📦 Productos obtenidos, total:', querySnapshot.size);
     
     const productos = querySnapshot.docs.map(doc => {
-      // 👇 CAMBIO AQUÍ: Mostrar ID + todos los datos
       console.log(`   📄 id: ${doc.id}:`, doc.data());
       return {
         id: doc.id,
@@ -100,5 +101,109 @@ export const obtenerCategorias = async () => {
     return categorias;
   } catch (error) {
     throw new Error(`Error obteniendo categorías: ${error.message}`);
+  }
+};
+
+export const obtenerUsuariosServicio = async (options = {}) => {
+  try {
+    const usuariosRef = collection(db, 'usuarios');
+    let q = query(usuariosRef);
+  
+    const condiciones = [];
+    
+    if (options.soloActivos) {
+      condiciones.push(where('activo', '==', true));
+    }
+    
+    if (options.rol) {
+      condiciones.push(where('rol', '==', options.rol));
+    }
+    
+    if (condiciones.length > 0) {
+      q = query(usuariosRef, ...condiciones);
+    }
+    
+    const querySnapshot = await getDocs(q);
+    
+    // Mapear los documentos a un array de usuarios
+    const usuarios = [];
+    querySnapshot.forEach((doc) => {
+      const usuarioData = doc.data();
+      
+      const { contrasenia, ...usuarioSinPassword } = usuarioData;
+      
+      usuarios.push({
+        id: doc.id,
+        ...usuarioSinPassword,
+        fecha_registro: usuarioData.fecha_registro?.toDate 
+          ? usuarioData.fecha_registro.toDate() 
+          : usuarioData.fecha_registro
+      });
+    });
+    
+    return usuarios;
+    
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    throw new Error('Error al obtener usuarios: ' + error.message);
+  }
+};
+
+
+export const obtenerUsuarioPorIdServicio = async (usuarioId) => {
+  try {
+
+    const usuariosRef = collection(db, 'usuarios');
+    const q = query(usuariosRef, where('__name__', '==', usuarioId));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      throw new Error('Usuario no encontrado');
+    }
+    
+    const usuarioDoc = querySnapshot.docs[0];
+    const usuarioData = usuarioDoc.data();
+    
+    const { contrasenia, ...usuarioSinPassword } = usuarioData;
+    
+    return {
+      id: usuarioDoc.id,
+      ...usuarioSinPassword,
+      fecha_registro: usuarioData.fecha_registro?.toDate 
+        ? usuarioData.fecha_registro.toDate() 
+        : usuarioData.fecha_registro
+    };
+    
+  } catch (error) {
+    console.error('Error al obtener usuario por ID:', error);
+    throw new Error('Error al obtener usuario: ' + error.message);
+  }
+};
+
+
+export const obtenerUsuarioPorIdDirectoServicio = async (usuarioId) => {
+  try {
+    
+    const usuarioDocRef = doc(db, 'usuarios', usuarioId);
+    const usuarioDoc = await getDoc(usuarioDocRef);
+    
+    if (!usuarioDoc.exists()) {
+      throw new Error('Usuario no encontrado');
+    }
+    
+    const usuarioData = usuarioDoc.data();
+    const { contrasenia, ...usuarioSinPassword } = usuarioData;
+    
+    return {
+      id: usuarioDoc.id,
+      ...usuarioSinPassword,
+      fecha_registro: usuarioData.fecha_registro?.toDate 
+        ? usuarioData.fecha_registro.toDate() 
+        : usuarioData.fecha_registro
+    };
+    
+  } catch (error) {
+    console.error('Error al obtener usuario por ID directo:', error);
+    throw new Error('Error al obtener usuario: ' + error.message);
   }
 };

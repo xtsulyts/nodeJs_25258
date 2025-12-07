@@ -12,7 +12,7 @@ import {
 
 const router = Router();
 
-router.get('/', verificarAutenticacion, autorizar([1, 2, 3]),obtenerTodos);
+router.get('/', obtenerTodos); // Se puede consultar sin logearse
 router.get('/:id', verificarAutenticacion, autorizar([1, 2, 3]), obtenerPorId);
 router.post('/', verificarAutenticacion, autorizar([1, 2]), crearProducto);
 router.delete('/:id', verificarAutenticacion, autorizar([1]), eliminarProducto);

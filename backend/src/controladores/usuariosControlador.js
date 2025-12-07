@@ -2,6 +2,9 @@ import {
   verificarEmailExistente,
   crearUsuario,
   loginServicio,
+  obtenerUsuariosServicio,
+  obtenerUsuarioPorIdServicio,
+  obtenerUsuarioPorIdDirectoServicio
 } from "../services/usuariosServicios.js";
 import cryptoServices from "../services/criptoServices.js";
 import { generarToken } from "../services/jwtServices.js";
@@ -141,3 +144,130 @@ export const logoutUsuario = (req, res) => {
     });
   }
 };
+
+export const obtenerUsuariosControlador = async (req, res) => {
+  try {
+    const { 
+      soloActivos, 
+      rol, 
+      limite 
+    } = req.query;
+
+    const opciones = {};
+    
+    if (soloActivos !== undefined) {
+      opciones.soloActivos = soloActivos === 'true' || soloActivos === '1';
+    }
+    
+    if (rol) {
+      opciones.rol = rol;
+    }
+    
+    if (limite && !isNaN(limite) && parseInt(limite) > 0) {
+      opciones.limite = parseInt(limite);
+    }
+    
+    const usuarios = await obtenerUsuariosServicio(opciones);
+    
+    res.status(200).json({
+      success: true,
+      count: usuarios.length,
+      data: usuarios
+    });
+    
+  } catch (error) {
+    console.error('Error en obtenerUsuariosControlador:', error);
+    
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error al obtener usuarios',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+};
+
+
+export const obtenerUsuarioPorIdControlador = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Se requiere el ID del usuario'
+      });
+    }
+    
+    const usuario = await obtenerUsuarioPorIdServicio(id);
+    
+    if (!usuario) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado'
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: usuario
+    });
+    
+  } catch (error) {
+    console.error('Error en obtenerUsuarioPorIdControlador:', error);
+    
+    if (error.message.includes('no encontrado')) {
+      return res.status(404).json({
+        success: false,
+        message: error.message
+      });
+    }
+    
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error al obtener el usuario',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+};
+
+
+export const obtenerMiPerfilControlador = async (req, res) => {
+  try {
+    console.log('🔍 DEBUG obtenerMiPerfilControlador:');
+    console.log('req.usuario:', req.usuario);
+    console.log('req.headers:', req.headers);
+    
+    const usuarioId = req.usuario?.id || req.usuario?.uid;
+    
+    if (!usuarioId) {
+      return res.status(401).json({
+        success: false,
+        message: 'No autorizado'
+      });
+    }
+    
+    const usuario = await obtenerUsuarioPorIdServicio(usuarioId);
+    
+    if (!usuario) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado'
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: usuario
+    });
+    
+  } catch (error) {
+    console.error('Error en obtenerMiPerfilControlador:', error);
+    
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error al obtener perfil',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+};
+
