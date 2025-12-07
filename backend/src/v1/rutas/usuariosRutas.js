@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { registroUsuarios, loginUsuarios } from '../../controladores/usuariosControlador.js';
+import { verificarToken } from '../../services/jwtServices.js';
+import { registroUsuarios, loginUsuarios, logoutUsuario } from '../../controladores/usuariosControlador.js';
 
 const router = Router();
 
@@ -34,9 +35,15 @@ router.post('/login',
     body('contrasenia')
       .notEmpty().withMessage('Contraseña requerida')
       .isLength({ min: 6 }).withMessage('Mínimo 6 caracteres')
-      .escape() // Opcional: seguridad contra XSS
+      .escape() 
   ],
   loginUsuarios
+);
+
+router.post(
+  '/logout',
+  verificarToken,  
+  logoutUsuario 
 );
 
 export { router as usuariosRutas };

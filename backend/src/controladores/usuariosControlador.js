@@ -117,3 +117,27 @@ export const loginUsuarios = async (req, res) => {
     });
   }
 };
+
+export const logoutUsuario = (req, res) => {
+  try {
+  
+    const usuarioId = req.usuario?.id || 'ID no disponible';
+    const usuarioEmail = req.usuario?.email || 'Email no disponible';
+    
+    console.log(`👋 Sesión cerrada - Usuario: ${usuarioEmail} (ID: ${usuarioId})`);
+    
+
+    return res.status(200).json({
+      exito: true,
+      mensaje: "Logout exitoso. Elimina el token de tu almacenamiento local.",
+      accionRequerida: "El cliente debe eliminar el token JWT de localStorage/cookies"
+    });
+    
+  } catch (error) {
+    console.error("❌ Error en logout:", error);
+    return res.status(500).json({
+      exito: false,
+      error: "Error interno durante el logout"
+    });
+  }
+};
