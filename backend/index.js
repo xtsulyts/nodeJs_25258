@@ -1,6 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from "cors";
+
 dotenv.config();
+
+
 
 import { productosRutas } from './src/v1/rutas/productosRutas.js';
 import { usuariosRutas } from './src/v1/rutas/usuariosRutas.js';
@@ -9,6 +13,14 @@ const app = express();
 const PUERTO = process.env.PUERTO || 3000;
 
 app.use(express.json());
+
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  credentials: true, 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization'] 
+};
+app.use(cors(corsOptions));
 
 // Rutas de la API
 app.use('/api/v1/productos', productosRutas);
