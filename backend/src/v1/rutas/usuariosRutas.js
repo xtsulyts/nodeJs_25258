@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { validate } from '../../middlewares/validadorMiddleware.js';
 import { body, query, param } from 'express-validator';
 import { verificarToken } from '../../services/jwtServices.js';
+import autorizar from '../../middlewares/autorizacionMiddleware.js';
+import { verificarAutenticacion } from '../../middlewares/autenticacionMiddleware.js';
 import { 
   registroUsuarios, 
   loginUsuarios, 
@@ -39,6 +41,8 @@ router.get('/',
       .isInt({ min: 1, max: 100 })
       .withMessage('Límite debe ser un número entre 1 y 100')
   ],
+  verificarAutenticacion, 
+  autorizar([1, 2]),
   validate,
   obtenerUsuariosControlador
 );
@@ -52,6 +56,8 @@ router.get('/:id',
       .isLength({ min: 1 })
       .withMessage('ID inválido')
   ],
+  verificarAutenticacion, 
+  autorizar([1, 2, 3]), 
   validate,
   obtenerUsuarioPorIdControlador
 );
