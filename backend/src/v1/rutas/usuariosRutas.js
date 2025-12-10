@@ -12,7 +12,6 @@ import {
   obtenerUsuariosControlador,
   obtenerMiPerfilControlador
  } from '../../controladores/usuariosControlador.js';
-import { verificarAutenticacion } from '../../middlewares/autenticacionMiddleware.js';
 
 const router = Router();
 
